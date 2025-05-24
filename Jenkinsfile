@@ -42,8 +42,8 @@ pipeline {
                 sh '''
                     ssh -o StrictHostKeyChecking=no ec2-user@172.31.21.36 '
                     docker rm -f project-1 || true
-                    docker pull "$REPO_NAME:$TAG"
-                    docker run -d --name project-1 -p 8080:8080 "$REPO_NAME:$TAG"
+                    docker pull $REPO_NAME:$TAG
+                    docker run -d --name project-1 -p 8080:8080 $REPO_NAME:$TAG
                     '
                 '''
                 }
