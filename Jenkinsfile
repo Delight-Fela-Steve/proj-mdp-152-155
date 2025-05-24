@@ -39,13 +39,14 @@ pipeline {
         stage('Deploy') {
             steps {
                 sshagent(credentials: ['deploy-server-credentials']) {
-                sh '''
-                    ssh -o StrictHostKeyChecking=no ec2-user@172.31.21.36 '
-                    docker rm -f project-1 || true
-                    docker pull $REPO_NAME:$TAG
-                    docker run -d --name project-1 -p 8080:8080 $REPO_NAME:$TAG
-                    '
-                '''
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ec2-user@172.31.21.36 << 'EOF'
+                            set -e  # Fail on error
+                            docker rm -f project-1 || true
+                            docker pull ${REPO_NAME}:${TAG}
+                            docker run -d --name project-1 -p 8080:8080 ${REPO_NAME}:${TAG}
+                        EOF
+                    """
                 }
             }
         }
