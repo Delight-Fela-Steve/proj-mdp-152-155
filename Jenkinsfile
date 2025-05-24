@@ -36,14 +36,18 @@ pipeline {
             }
         }
 
-        // stage('Deploy') {
-        //     steps {
-        //         sshagent(credentials: ['deploy-server-credentials']) {
-        //         sh '''
-        //             scp -o StrictHostKeyChecking=no ./target/Web*.war ec2-user@172.31.21.36:/opt/tomcat/webapps/ROOT.war
-        //         '''
-        //         }
-        //     }
-        // }
+        stage('Deploy') {
+            steps {
+                sshagent(credentials: ['deploy-server-credentials']) {
+                sh '''
+                    ssh -o StrictHostKeyChecking=no ec2-user@172.31.21.36 '
+                    docker rm -f project-1 || true
+                    docker pull "$REPO_NAME:$TAG"
+                    docker run -d --name project-1 -p 8080:8080 "$REPO_NAME:$TAG"
+                    '
+                '''
+                }
+            }
+        }
     }
 }
