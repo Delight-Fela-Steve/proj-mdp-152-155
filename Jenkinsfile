@@ -2,23 +2,43 @@ pipeline {
     agent {
         label "builder"
     }
+    environment{
+        REPO_NAME="delightfela/project-1"
+        TAG=sh(
+            script: 'mvn help:evaluate ... | tr -d "-"', 
+            returnStdout: true
+        ).trim()
+    }
 
     stages {
-        stage('Build and Test') {
+        stage('Build Docker Image') {
             steps {
                 sh"""
-                mvn clean package
+                docker build -t $REPO_NAME:$TAG .
                 """
             }
         }
-        stage('Deploy') {
+
+        stage('Push Docker Image') {
             steps {
-                sshagent(credentials: ['deploy-server-credentials']) {
-                sh '''
-                    scp -o StrictHostKeyChecking=no ./target/Web*.war ec2-user@172.31.21.36:/opt/tomcat/webapps/ROOT.war
-                '''
-    }
+                withCredentials([usernamePassword(CredentialsId:'docker-hub-credentials', usernameVariable:'DOCKERHUB_USER', passwordVariable:'DOCKERHUB_PASS')]){
+                sh"""
+                echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin
+                docker push $REPO_NAME:$TAG
+                """
+                }
+
             }
         }
+
+        // stage('Deploy') {
+        //     steps {
+        //         sshagent(credentials: ['deploy-server-credentials']) {
+        //         sh '''
+        //             scp -o StrictHostKeyChecking=no ./target/Web*.war ec2-user@172.31.21.36:/opt/tomcat/webapps/ROOT.war
+        //         '''
+        //         }
+        //     }
+        // }
     }
 }
