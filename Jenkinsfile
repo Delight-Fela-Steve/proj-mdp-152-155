@@ -45,7 +45,6 @@ pipeline {
                             docker rm -f project-1 || true
                             docker pull ${REPO_NAME}:${TAG}
                             docker run -d --name project-1 -p 8080:8080 ${REPO_NAME}:${TAG}
-                        EOF
                     """
                 }
             }
