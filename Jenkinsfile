@@ -4,10 +4,7 @@ pipeline {
     }
     environment{
         REPO_NAME="delightfela/project-1"
-        TAG=sh(
-            script: 'mvn help:evaluate ... | tr -d "-"', 
-            returnStdout: true
-        ).trim()
+        TAG=sh(script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout | tr -d "-"', returnStdout: true).trim()
     }
 
     stages {
