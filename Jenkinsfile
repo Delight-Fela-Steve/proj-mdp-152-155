@@ -4,11 +4,14 @@ pipeline {
     }
 
     stages {
-        stage('Build and Test') {
+        stage('Build') {
             steps {
-                sh"""
-                mvn clean package
-                """
+                echo 'Building..'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing..'
             }
         }
         stage('Deploy') {
