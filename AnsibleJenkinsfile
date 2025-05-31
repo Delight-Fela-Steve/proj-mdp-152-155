@@ -1,0 +1,24 @@
+pipeline {
+    agent {
+        label "builder"
+    }
+    environment{
+        BUCKET_NAME="project-2.k8s.local"
+        CLUSTER_NAME="project-2-k8-bucket"
+    }
+
+    stages {
+        stage('Install Kubernetes Tools') {
+            steps {
+                sh"""
+                cd ansible
+                ansible-playbook -i inventory.ini playbooks/install_kubernetes.yml
+                """
+            }
+        }
+
+
+
+
+    }
+}

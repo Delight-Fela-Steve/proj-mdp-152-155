@@ -1,0 +1,12 @@
+---
+- name: Teardown Kubernetes Cluster
+  hosts: localhost
+
+  tasks:
+    - name: Delete cluster
+      ansible.builtin.command:
+        cmd: "kops delete cluster --name={{ cluster_name }} --state=s3://{{ state_store_bucket }} --yes"
+
+    - name: Remove S3 bucket
+      ansible.builtin.command:
+        cmd: "aws s3 rb s3://{{ state_store_bucket }} --force"
