@@ -43,6 +43,7 @@ pipeline {
                 cd kubernetes
                 kubectl apply -f deployment.yml
                 kubectl set image deployment/webapp-deployment webapp="$REPO_NAME:$TAG"
+                kubectl apply -f service.yml
                 """
             }
         }
