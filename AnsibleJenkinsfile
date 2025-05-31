@@ -17,6 +17,15 @@ pipeline {
             }
         }
 
+        stage('Create Cluster') {
+            steps {
+                sh"""
+                cd ansible
+                ansible-playbook -i inventory.ini playbooks/create_cluster.yml
+                """
+            }
+        }
+
 
 
 
